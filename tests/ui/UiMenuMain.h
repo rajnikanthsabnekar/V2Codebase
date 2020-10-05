@@ -38,6 +38,10 @@ class UiMenuMainClass
 	
 	void drawEditScreen4(void);
 	
+	void drawEditScreen5(void);
+	
+	void drawEditScreen6(void);
+	
 	void runtimeDisplayOptions(ParameterDisplayFormat option);
 	
 	void drawRuntimeScreen1(void);

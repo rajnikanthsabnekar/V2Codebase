@@ -46,6 +46,54 @@ byte rotate1customChar[] = {
 
 */
 
+byte doubleArrowCustomChar[] = {
+	B00000,
+	B10001,
+	B01010,
+	B10101,
+	B01010,
+	B00100,
+	B00000,
+	B00000
+};
+
+byte singleDownArrowCustomChar[] = {
+	B00000,
+	B00000,
+	B00000,
+	B00000,
+	B10001,
+	B01010,
+	B00100,
+	B00000
+};
+
+byte InvertPointedArrowCustomChar[] = {
+	B00000,
+	B00100,
+	B00100,
+	B00100,
+	B10101,
+	B01110,
+	B00100,
+	B00000
+};
+
+byte filledDownArrowCustomChar[] = {
+	B00100,
+	B00100,
+	B00100,
+	B00100,
+	B11111,
+	B01110,
+	B00100,
+	B00000
+};
+
+
+
+
+
 /// Down box arrow
 byte editCustomChar[] = {
 	B01110,
@@ -59,7 +107,7 @@ byte editCustomChar[] = {
 };
 
 /// arrown over a container line
-byte saveCustomChar[] = {
+byte saveCustomChar1[] = {
   B00100,
   B00100,
   B00100,
@@ -69,6 +117,18 @@ byte saveCustomChar[] = {
   B10001,
   B11111
 };
+
+byte saveCustomChar2[] = {
+    B00011,
+    B10001,
+    B01001,
+    B00101,
+    B00101,
+    B01001,
+    B10001,
+    B00011
+};
+
 
 // double arrow rotate
 byte rotate2customChar[] = {
@@ -134,13 +194,13 @@ const char splashScreenMiddleBuffer[21] = {
 };
 
 enum Icons {
-	ROTATE_FOR_MORE	=0x0,
-	PRESS_TO_SAVE	=0x1,
-	PRESS_TO_EDIT	=0x2,
-	GENERIC_NAME1	=0x3,
-	GENERIC_NAME2	=0x4,
-	GENERIC_NAME3	=0x5,
-	GENERIC_NAME4	=0x6,
+	ROTATE_FOR_MORE	=0x4,
+	PRESS_TO_SAVE	=0x5,
+	PRESS_TO_EDIT	=0x6,
+//	GENERIC_NAME1	=0x3,
+//	GENERIC_NAME2	=0x4,
+//	GENERIC_NAME3	=0x5,
+//	GENERIC_NAME4	=0x6,
 	RIGHT_ARROW_ICON=0x7,
 	SEPERATOR_TYPE1	=0x8
 	};
@@ -152,15 +212,19 @@ UiMenuMainClass UiMenuMain;
 void UiMenuMainClass::init() {
 	// set up the LCD's number of columns and rows:
 	lcd.begin(20, 4);
-	//lcd.createChar(GENERIC_NAME1,boxCustomChar);
-	lcd.createChar(GENERIC_NAME2,editCustomChar);
-	//lcd.createChar(GENERIC_NAME3,rotateCustomChar);
-	//lcd.createChar(GENERIC_NAME4,rotate1customChar);
-	lcd.createChar(PRESS_TO_SAVE,saveCustomChar);
-	lcd.createChar(ROTATE_FOR_MORE,rotate2customChar);
+	
+	
+	lcd.createChar(0x0, doubleArrowCustomChar);
+	lcd.createChar(0x1, singleDownArrowCustomChar);
+	lcd.createChar(0x2, InvertPointedArrowCustomChar);
+	lcd.createChar(0x3, filledDownArrowCustomChar);
+		
+	lcd.createChar(0x4,rotate2customChar);
+	lcd.createChar(0x5,saveCustomChar2);
+		
 	lcd.createChar(PRESS_TO_EDIT,pressEditCustomChar);
 	lcd.createChar(RIGHT_ARROW_ICON,rightArrowCustomChar);
-	
+
 	
 	editState.currentPosition = 0;
 	
@@ -237,10 +301,14 @@ void UiMenuMainClass::drawEditScreens() {
 		drawEditScreen3();
 	}else if ( editState.currentPosition == 3 ) {
 		drawEditScreen4();
+	}else if ( editState.currentPosition == 4 ) {
+		drawEditScreen5();
+	}else if ( editState.currentPosition == 5 ) {
+		drawEditScreen6();
 	}
 
 	editState.currentPosition++;
-	if ( editState.currentPosition >= 4 ) {
+	if ( editState.currentPosition >= 6 ) {
 		editState.currentPosition = 0 ;
 	}
 
@@ -248,31 +316,134 @@ void UiMenuMainClass::drawEditScreens() {
 	return;
 }
 
+void UiMenuMainClass::drawEditTopBottomLines(void) {
+	
+	lcd.setCursor(19,0);
+	lcd.write((byte)(0x4));
+
+//	lcd.setCursor(19,3);
+//	lcd.write((byte)(0x5));
+	
+	return;
+	
+}
+
+
 void UiMenuMainClass::drawEditScreen1(void) {
 	
+
 	/// Main Edit Screen 
 	lcd.setCursor(0,0);
-	lcd.write("  TV    RR   IER   Pmax ");
+	lcd.write(" RR  TV  Pmax IER");
 	lcd.setCursor(0,1);
-	lcd.write("  400   40   1:3    40  ");
+	lcd.write(" 40  400  40  1:3");
 	lcd.setCursor(0,2);
-	lcd.write(" <400> <40> <1:3>  <40> ");
-	lcd.setCursor(0,3);
-	lcd.write("  v     v     v      v  ");
+	lcd.write("<40><400><40><1:3>");
 	
-	drawEditTopBottomLines();
+	//lcd.setCursor(0,3);
+	//lcd.write(" v    v     v    v ");
+	lcd.setCursor(1,3);lcd.write((byte)(0x0));
+	lcd.setCursor(6,3);lcd.write((byte)(0x1));
+	lcd.setCursor(11,3);lcd.write((byte)(0x2));
+	lcd.setCursor(16,3);lcd.write((byte)(0x3));
+	
+	//drawEditTopBottomLines();
+	lcd.setCursor(19,3);
+	lcd.write((byte)(0x5));
+
+	delay(DELAY_1_SECOND);
 }
 
 void UiMenuMainClass::drawEditScreen2(void) {
 	
+	lcd.setCursor(7,0);
+	lcd.write("ALARMS");
+	lcd.setCursor(1,2);
+	lcd.write("FiO2  35%  <35%>");
+	
+	drawEditTopBottomLines();
+	lcd.setCursor(19,3);
+	lcd.write((byte)(0x6));
+	
+	delay(200);
+	lcd.setCursor(19,3);
+	lcd.write((byte)(0x5));
+	
+	for ( int i = 0 ; i < 3 ; i ++ ){
+		lcd.setCursor(13,2);
+		lcd.print( 40 + (5 * i) );	
+		delay(50);
+	}
+	lcd.setCursor(7,2);lcd.print(50);
+	lcd.setCursor(19,3);
+	lcd.write((byte)(0x6));
+	
+	return ;
 }
 	
 void UiMenuMainClass::drawEditScreen3(void){
+	
+	lcd.setCursor(7,0);
+	lcd.write("ABOUT");
+	lcd.setCursor(0,1);
+	lcd.write("Device   : BMV");
+	lcd.setCursor(0,2);
+	lcd.write("Serial No: TW0001");
+	lcd.setCursor(0,3);
+	lcd.write("Version  : P4_V2.3");
+
+	//drawEditTopBottomLines();
+	lcd.setCursor(19,3);
+	lcd.write(" ");
+	
+	return ;
+	
 }
 	
 void UiMenuMainClass::drawEditScreen4(void){
+
+	lcd.setCursor(3,0);
+	lcd.write("RAW VOLTAGES");
+	
+	lcd.setCursor(0,2);
+	lcd.write("GP1 :2.567 GP2:2.899");
+	lcd.setCursor(0,3);
+	lcd.write("DP1 :1.987 DP2:2.034");
+	
+	delay(200);
+	
+	lcd.setCursor(3,0);
+	lcd.write("RAW PRESSURES");
+	
+	lcd.setCursor(0,2);
+	lcd.write("GP1 : 20  GP2: 25   ");
+	lcd.setCursor(0,3);
+	lcd.write("DP1 : 30  DP2: 34   ");
+
+	return ;
+}
+
+void UiMenuMainClass::drawEditScreen5(void){
+	
+	lcd.setCursor(3,0);
+	lcd.write("CALIBRATION");
+	lcd.setCursor(19,3);
+	lcd.write((byte)(0x6));
+	return ;
 	
 }
+
+void UiMenuMainClass::drawEditScreen6(void){
+	
+	lcd.setCursor(3,0);
+	lcd.write("LCD CONTRAST");
+	lcd.setCursor(19,3);
+	lcd.write((byte)(0x6));
+	return ;
+	
+}
+
+
 
 
 void UiMenuMainClass::drawRuntimeScreen1(void) {
@@ -428,17 +599,6 @@ void UiMenuMainClass::drawRuntimeTopBottomLines(void) {
 	return;
 }
 
-void UiMenuMainClass::drawEditTopBottomLines(void) {
-	
-	lcd.setCursor(0,19);
-	lcd.write(ROTATE_FOR_MORE);
-	lcd.setCursor(2,19);
-	lcd.write(PRESS_TO_SAVE);
-	
-	return;
-	
-}
-
 void lookForKeyEvents(void) {
 	
 	RT_Events_T eRTState = RT_NONE;
@@ -467,8 +627,8 @@ void testIcons(){
 	//	lcd.setCursor(5,0);
 	//	lcd.write(GENERIC_NAME1);
 	
-	lcd.setCursor(15,0);
-	lcd.write(GENERIC_NAME2);
+//	lcd.setCursor(15,0);
+//	lcd.write(GENERIC_NAME2);
 	
 	//lcd.setCursor(10,1);
 	//lcd.write(GENERIC_NAME3);

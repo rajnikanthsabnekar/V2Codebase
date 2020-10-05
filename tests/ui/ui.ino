@@ -17,6 +17,8 @@ void setup() {
 
 void loop() {  
 	
+#if 1
+
 	UiMenuMain.clearDisplay();
 	
 	lcd.setCursor(5,2);
@@ -39,18 +41,23 @@ void loop() {
 		}
 	}
 	
-#if 0	
+#endif	
+	
+#if 1
+
 	UiMenuMain.clearDisplay();
 	lcd.setCursor(5,2);
-	lcd.write("EDIT SCREENs");
+	lcd.write("EDIT SCREENS");
+	delay(200);
 
-//	for ( int i = 0 ; i < 3 ; i++ ) 
+	for ( int i = 0 ; i < 6 ; i++ ) 
 	{
 		UiMenuMain.clearDisplay();
 		UiMenuMain.drawEditScreens();
 	
 		delay(500);
 	}
+	
 #endif
 	
 	return;
