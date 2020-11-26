@@ -34,7 +34,7 @@
 
 /// General Defines
 
-#define DELAY_1_SECOND 1000
+#define DELAY_1_SECOND (1000 * 10 )
 
 enum ParameterDisplayFormat {
 	PARAM_3_VERTICAL = 0x0,

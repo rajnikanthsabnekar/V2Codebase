@@ -3,7 +3,7 @@
 // 
 
 #include "UiMenuMain.h"
-#include "encoder/encoder.h"
+//#include "encoder/encoder.h"
 
 
 
@@ -154,14 +154,15 @@ byte pressEditCustomChar[] = {
 };
 
 byte rightArrowCustomChar[] = {
-  B00000,
-  B01000,
-  B00100,
-  B00010,
-  B00100,
-  B01000,
-  B00000,
-  B00000
+
+B00000,
+B00100,
+B00010,
+B11111,
+B11111,
+B00010,
+B00100,
+B00000
 };
 
 const char clearScreenBuffer[21] = {
@@ -229,6 +230,8 @@ void UiMenuMainClass::init() {
 	editState.currentPosition = 0;
 	
 	runtimeState.currentPosition = 0;
+	
+	runtimeState.totalPages = 3;
 	
 	runtimeState.paramPerScreen = PARAM_3_VERTICAL;
 	
@@ -342,16 +345,16 @@ void UiMenuMainClass::drawEditScreen1(void) {
 	
 	//lcd.setCursor(0,3);
 	//lcd.write(" v    v     v    v ");
-	lcd.setCursor(1,3);lcd.write((byte)(0x0));
-	lcd.setCursor(6,3);lcd.write((byte)(0x1));
-	lcd.setCursor(11,3);lcd.write((byte)(0x2));
+	lcd.setCursor(1,3);lcd.write((byte)(0x3));
+	lcd.setCursor(6,3);lcd.write((byte)(0x3));
+	lcd.setCursor(11,3);lcd.write((byte)(0x3));
 	lcd.setCursor(16,3);lcd.write((byte)(0x3));
 	
 	//drawEditTopBottomLines();
 	lcd.setCursor(19,3);
 	lcd.write((byte)(0x5));
 
-	delay(DELAY_1_SECOND);
+	delay( DELAY_1_SECOND * 2 );
 }
 
 void UiMenuMainClass::drawEditScreen2(void) {
@@ -360,6 +363,8 @@ void UiMenuMainClass::drawEditScreen2(void) {
 	lcd.write("ALARMS");
 	lcd.setCursor(1,2);
 	lcd.write("FiO2  35%  <35%>");
+	lcd.setCursor(14,3);
+	lcd.write((byte)(0x3));
 	
 	drawEditTopBottomLines();
 	lcd.setCursor(19,3);
@@ -372,7 +377,7 @@ void UiMenuMainClass::drawEditScreen2(void) {
 	for ( int i = 0 ; i < 3 ; i ++ ){
 		lcd.setCursor(13,2);
 		lcd.print( 40 + (5 * i) );	
-		delay(50);
+		delay(DELAY_1_SECOND);
 	}
 	lcd.setCursor(7,2);lcd.print(50);
 	lcd.setCursor(19,3);
@@ -384,7 +389,7 @@ void UiMenuMainClass::drawEditScreen2(void) {
 void UiMenuMainClass::drawEditScreen3(void){
 	
 	lcd.setCursor(7,0);
-	lcd.write("ABOUT");
+	lcd.write("About");
 	lcd.setCursor(0,1);
 	lcd.write("Device   : BMV");
 	lcd.setCursor(0,2);
@@ -401,34 +406,50 @@ void UiMenuMainClass::drawEditScreen3(void){
 }
 	
 void UiMenuMainClass::drawEditScreen4(void){
+#if 0
 
 	lcd.setCursor(3,0);
-	lcd.write("RAW VOLTAGES");
+	lcd.write("Raw Voltages");
 	
 	lcd.setCursor(0,2);
-	lcd.write("GP1 :2.567 GP2:2.899");
+	lcd.write("GP1 :256 DP1:2899");
 	lcd.setCursor(0,3);
-	lcd.write("DP1 :1.987 DP2:2.034");
-	
-	delay(200);
+	lcd.write("GP2 :198 DP2:2034");
+	delay(DELAY_1_SECOND);
 	
 	lcd.setCursor(3,0);
-	lcd.write("RAW PRESSURES");
+	lcd.write("Raw Pressures");
 	
 	lcd.setCursor(0,2);
-	lcd.write("GP1 : 20  GP2: 25   ");
+	lcd.write("GP1 : 20  DP1: 25   ");
 	lcd.setCursor(0,3);
-	lcd.write("DP1 : 30  DP2: 34   ");
-
+	lcd.write("GP2 : 30  DP2: 34   ");
+#endif
 	return ;
 }
 
 void UiMenuMainClass::drawEditScreen5(void){
 	
-	lcd.setCursor(3,0);
-	lcd.write("CALIBRATION");
+	lcd.setCursor(1,0);
+	lcd.write(" O2 Calibration");
+	
+	lcd.setCursor(1,1);lcd.write("0%");
+	lcd.setCursor(7,1);lcd.write("21%");
+	lcd.setCursor(14,1);lcd.write("100%");
+	
+	lcd.setCursor(0,2);lcd.write("11.5");
+	lcd.setCursor(6,2);lcd.write("109.7");
+	lcd.setCursor(13,2);lcd.write("595.9");
+	
+	lcd.setCursor(1,3);
+	lcd.write((byte)(0x3));
+	lcd.setCursor(7,3);
+	lcd.write((byte)(0x3));
+	lcd.setCursor(14,3);
+	lcd.write((byte)(0x3));
+	
 	lcd.setCursor(19,3);
-	lcd.write((byte)(0x6));
+	lcd.write((byte)(0x5));
 	return ;
 	
 }
@@ -436,9 +457,16 @@ void UiMenuMainClass::drawEditScreen5(void){
 void UiMenuMainClass::drawEditScreen6(void){
 	
 	lcd.setCursor(3,0);
-	lcd.write("LCD CONTRAST");
+	lcd.write("LCD Contrast");
+	
+	lcd.setCursor(1,2);
+	lcd.write("Value 50%  <50%>");
+	lcd.setCursor(14,3);
+	lcd.write((byte)(0x3));
+	
 	lcd.setCursor(19,3);
-	lcd.write((byte)(0x6));
+	lcd.write((byte)(0x5));
+	
 	return ;
 	
 }
@@ -448,14 +476,14 @@ void UiMenuMainClass::drawEditScreen6(void){
 
 void UiMenuMainClass::drawRuntimeScreen1(void) {
 
-	drawRuntimeTopBottomLines();
+	drawRuntimeTopBottomLines(runtimeState.currentPosition+1,runtimeState.totalPages);
 
 	if ( runtimeState.paramPerScreen == PARAM_3_VERTICAL ) {
 		
 		lcd.setCursor(0,1);
-		lcd.write(" TV    TVi   TVe  ");
+		lcd.write("  TV    TVi   TVe ");
 		lcd.setCursor(0,2);
-		lcd.write(" 400   380   420  ");
+		lcd.write(" 400ml 380ml 420ml");
 
 	}else if ( runtimeState.paramPerScreen == PARAM_4_VERTICAL ){
 		
@@ -495,16 +523,16 @@ void UiMenuMainClass::drawRuntimeScreen1(void) {
 	return;	
 }
 
-void UiMenuMainClass::drawRuntimeScreen2(void) {
+void UiMenuMainClass::drawRuntimeScreen3(void) {
 	
-	drawRuntimeTopBottomLines();
+	drawRuntimeTopBottomLines(runtimeState.currentPosition+1,runtimeState.totalPages);
 	
 	if ( runtimeState.paramPerScreen == PARAM_3_VERTICAL ) {	
 		
 		lcd.setCursor(0,1);
-		lcd.write(" IE    RR   Plato ");
+		lcd.write(" IER   RR    FiO2 ");
 		lcd.setCursor(0,2);
-		lcd.write(" 1:3   30    34   ");
+		lcd.write(" 1:3  30bpm   34% ");
 		
 	} else 	if ( runtimeState.paramPerScreen == PARAM_3_HORIZONTAL ) {
 		
@@ -540,16 +568,18 @@ void UiMenuMainClass::drawRuntimeScreen2(void) {
 	return;
 }
 
-void UiMenuMainClass::drawRuntimeScreen3(void) {
+void UiMenuMainClass::drawRuntimeScreen2(void) {
 	
-	drawRuntimeTopBottomLines();
+	drawRuntimeTopBottomLines(runtimeState.currentPosition+1,runtimeState.totalPages);
 
 	if ( runtimeState.paramPerScreen == PARAM_3_VERTICAL ) {
 	
 		lcd.setCursor(0,1);
-		lcd.write(" PIP  FiO2   PEEP ");
+		lcd.write(" PIP  Plat  PEEP ");
 		lcd.setCursor(0,2);
-		lcd.write(" 42    40%    10  ");
+		lcd.write(" 42    34    10  ");
+		lcd.setCursor(2,3);
+		lcd.write("units : cmh2o");
 		
 	} else 	if ( runtimeState.paramPerScreen == PARAM_3_HORIZONTAL ) {
 	
@@ -588,19 +618,26 @@ void UiMenuMainClass::clearDisplay(void) {
 }
 
 
-void UiMenuMainClass::drawRuntimeTopBottomLines(void) {
+void UiMenuMainClass::drawRuntimeTopBottomLines(int currentPage, int totalPages) {
+	static char buffer[4];
 	lcd.setCursor(0,0);
 	lcd.write(topBottomLineBuffer);
-	lcd.write(RIGHT_ARROW_ICON);lcd.write(" ");lcd.write(ROTATE_FOR_MORE);
+	//lcd.setCursor(17,0);
+	//lcd.write(RIGHT_ARROW_ICON);lcd.write(" ");
+	lcd.setCursor(19,0);
+	lcd.write(ROTATE_FOR_MORE);
 	lcd.setCursor(0,3);
 	lcd.write(topBottomLineBuffer);
-	lcd.write(RIGHT_ARROW_ICON);lcd.write(" ");lcd.write(PRESS_TO_EDIT);
+	//lcd.write(RIGHT_ARROW_ICON);lcd.write(" ");
+	lcd.setCursor(19,3);lcd.write(PRESS_TO_EDIT);
+	sprintf(buffer,"%d/%d",currentPage, totalPages);
+	lcd.setCursor(0,0);lcd.write(buffer);
 	
 	return;
 }
 
 void lookForKeyEvents(void) {
-	
+#if 0	
 	RT_Events_T eRTState = RT_NONE;
 	eRTState = encoderScanUnblocked();
 	switch (eRTState)
@@ -619,7 +656,7 @@ void lookForKeyEvents(void) {
 	if (eRTState != RT_NONE) {
 
 	}
-	
+#endif	
 	return;
 }
 

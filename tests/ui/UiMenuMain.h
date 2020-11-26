@@ -51,12 +51,14 @@ class UiMenuMainClass
 	void drawRuntimeScreen3(void);
 	
 	void clearDisplay(void);
+	
+	void lookForKeyEvents(void);
+
 private:
-	void drawRuntimeTopBottomLines(void);	
+	void drawRuntimeTopBottomLines(int currentPage, int totalPages);	
 	
-	void drawEditTopBottomLines(void);	
+	void drawEditTopBottomLines(/*int currentPage, int totalPages*/void);	
 	
-	void lookForKeyEvents(void); 
 	
 	void updateScreen();
 	
@@ -64,6 +66,7 @@ private:
 	struct MenuItems {
 		int						currentPosition;
 		ParameterDisplayFormat	paramPerScreen;
+		int						totalPages;
 	}; 	
 
 	/// run time screen parameters

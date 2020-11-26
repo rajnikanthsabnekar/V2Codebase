@@ -1,10 +1,11 @@
-#include "UiMenuMain.h"
 
+#include "Arduino.h"
 
 // include the library code:
 // local includes
 #include "UiMenuMain.h"
-#include "./encoder/encoder.h"
+
+#define DELAY_HALF_SECOND (500 * 10 )
 
 extern UiMenuMainClass UiMenuMain;
 
@@ -23,21 +24,21 @@ void loop() {
 	
 	lcd.setCursor(5,2);
 	lcd.write("RUNTIME SCREENS");
-	delay(200);
+	delay(DELAY_HALF_SECOND);
 	
-	for ( int i = 0 ; i < 4 ; i++ ) {
+	for ( int i = 0 ; i < 1 ; i++ ) {
 
 		UiMenuMain.clearDisplay();
 		lcd.setCursor(5,2);
 		lcd.write("PATTERN  ");lcd.print(i+1);
-		delay(200);
+		delay(DELAY_HALF_SECOND);
 		
 		UiMenuMain.runtimeDisplayOptions((ParameterDisplayFormat)(i));
 
 		for (int j =0 ; j < 3; j++ ) {
 			UiMenuMain.clearDisplay();
 			UiMenuMain.drawRuntimeScreens();
-			delay(500);
+			delay(DELAY_1_SECOND);
 		}
 	}
 	
@@ -48,14 +49,14 @@ void loop() {
 	UiMenuMain.clearDisplay();
 	lcd.setCursor(5,2);
 	lcd.write("EDIT SCREENS");
-	delay(200);
+	delay(DELAY_HALF_SECOND);
 
 	for ( int i = 0 ; i < 6 ; i++ ) 
 	{
 		UiMenuMain.clearDisplay();
 		UiMenuMain.drawEditScreens();
 	
-		delay(500);
+		delay(DELAY_1_SECOND);
 	}
 	
 #endif
