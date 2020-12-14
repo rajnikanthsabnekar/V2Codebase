@@ -10,7 +10,6 @@
 #endif
 #include "VentIncludes.h"
 
-
 class UiMenuMainClass
 {
  protected:
@@ -50,9 +49,18 @@ class UiMenuMainClass
 	
 	void drawRuntimeScreen3(void);
 	
+	void drawServiceMenuScreen1(void);
+	
+	void drawServiceMenuScreen2(void);
+	
+	void drawServiceMenuScreen3(void);
+	
+	
 	void clearDisplay(void);
 	
 	void lookForKeyEvents(void);
+	
+	void errorScreen ( int moduleName, int msgId);
 
 private:
 	void drawRuntimeTopBottomLines(int currentPage, int totalPages);	

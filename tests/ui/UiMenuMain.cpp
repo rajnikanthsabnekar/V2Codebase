@@ -46,6 +46,17 @@ byte rotate1customChar[] = {
 
 */
 
+byte errorCustomChar[] = {
+	 B00000,
+	 B00000,
+	 B00000,
+	 B11101,
+	 B10001,
+	 B11001,
+	 B10000,
+	 B11101
+};
+
 byte doubleArrowCustomChar[] = {
 	B00000,
 	B10001,
@@ -215,9 +226,11 @@ void UiMenuMainClass::init() {
 	lcd.begin(20, 4);
 	
 	
-	lcd.createChar(0x0, doubleArrowCustomChar);
-	lcd.createChar(0x1, singleDownArrowCustomChar);
-	lcd.createChar(0x2, InvertPointedArrowCustomChar);
+	//lcd.createChar(0x0, doubleArrowCustomChar);
+	//lcd.createChar(0x1, singleDownArrowCustomChar);
+	//lcd.createChar(0x2, InvertPointedArrowCustomChar);
+	
+	lcd.createChar(0x1, errorCustomChar);
 	lcd.createChar(0x3, filledDownArrowCustomChar);
 		
 	lcd.createChar(0x4,rotate2customChar);
@@ -260,8 +273,35 @@ void UiMenuMainClass::drawSplashScreen(int displayTime) {
 	
 	delay(displayTime);
 	
+	lcd.setCursor(18,3);
+	lcd.write("  ");
+//	lcd.setCursor(19,1);
+//	lcd.write(" ");
+	lcd.setCursor(19,2);
+	lcd.write(" ");
+	
+	lcd.setCursor(19,3);
+	lcd.write((byte)(0x6));
+
+    delay(displayTime);
+	
 	return;
 }
+
+void UiMenuMainClass::errorScreen ( int moduleName, int msgId) {
+	
+	lcd.setCursor(1,0);
+	lcd.write("!!!   Error   !!! ");
+	
+	lcd.setCursor(0,2);
+	lcd.write("  <Module Name>    ");
+	
+	lcd.setCursor(0,3);
+	lcd.write("  <Error message>  ");
+	
+	delay(DELAY_1_SECOND * 5);
+}
+
 
 void UiMenuMainClass::drawClosingScreen() {
 	return;
@@ -399,7 +439,7 @@ void UiMenuMainClass::drawEditScreen3(void){
 
 	//drawEditTopBottomLines();
 	lcd.setCursor(19,3);
-	lcd.write(" ");
+	lcd.write((byte)(0x6));// press edit to enter factory reset/raw pressure/raw voltage screens
 	
 	return ;
 	
@@ -433,23 +473,29 @@ void UiMenuMainClass::drawEditScreen5(void){
 	lcd.setCursor(1,0);
 	lcd.write(" O2 Calibration");
 	
-	lcd.setCursor(1,1);lcd.write("0%");
-	lcd.setCursor(7,1);lcd.write("21%");
-	lcd.setCursor(14,1);lcd.write("100%");
+	lcd.setCursor(1,2);lcd.write("< 0% >");
+	//lcd.setCursor(7,1);lcd.write("< 21%>");
+	//lcd.setCursor(14,1);lcd.write("<100%>");
 	
-	lcd.setCursor(0,2);lcd.write("11.5");
-	lcd.setCursor(6,2);lcd.write("109.7");
-	lcd.setCursor(13,2);lcd.write("595.9");
+	//lcd.setCursor(7,1);lcd.write("21%");
+	//lcd.setCursor(14,1);lcd.write("100%");
 	
-	lcd.setCursor(1,3);
+	lcd.setCursor(8,2);lcd.write("<Calibrate>");// Calibrate/<Current Value>/Reset
+	
+	lcd.setCursor(5,3);//pot 2
 	lcd.write((byte)(0x3));
-	lcd.setCursor(7,3);
-	lcd.write((byte)(0x3));
-	lcd.setCursor(14,3);
+	lcd.setCursor(13,3);// pot 3
 	lcd.write((byte)(0x3));
 	
-	lcd.setCursor(19,3);
-	lcd.write((byte)(0x5));
+	lcd.setCursor(19,3);/// SAVE NEW CALIB VALUE
+	lcd.write((byte)(0x6));
+	
+	delay(DELAY_1_SECOND * 2 );
+	lcd.setCursor(8,2);lcd.write("  <11.5mV>  ");// Calibrate/<Current Value>/Reset
+	delay(DELAY_1_SECOND * 2 );
+	lcd.setCursor(8,2);lcd.write("  <Reset>   ");// Calibrate/<Current Value>/Reset
+	delay(DELAY_1_SECOND * 2 );
+
 	return ;
 	
 }
@@ -483,7 +529,9 @@ void UiMenuMainClass::drawRuntimeScreen1(void) {
 		lcd.setCursor(0,1);
 		lcd.write("  TV    TVi   TVe ");
 		lcd.setCursor(0,2);
-		lcd.write(" 400ml 380ml 420ml");
+		lcd.write("  400   380    420 ");
+		lcd.setCursor(2,3);
+		lcd.write("  units : ml     ");
 
 	}else if ( runtimeState.paramPerScreen == PARAM_4_VERTICAL ){
 		
@@ -530,9 +578,9 @@ void UiMenuMainClass::drawRuntimeScreen3(void) {
 	if ( runtimeState.paramPerScreen == PARAM_3_VERTICAL ) {	
 		
 		lcd.setCursor(0,1);
-		lcd.write(" IER   RR    FiO2 ");
+		lcd.write("  IER   RR    FiO2");
 		lcd.setCursor(0,2);
-		lcd.write(" 1:3  30bpm   34% ");
+		lcd.write("  1:3  30bpm   34%");
 		
 	} else 	if ( runtimeState.paramPerScreen == PARAM_3_HORIZONTAL ) {
 		
@@ -575,11 +623,11 @@ void UiMenuMainClass::drawRuntimeScreen2(void) {
 	if ( runtimeState.paramPerScreen == PARAM_3_VERTICAL ) {
 	
 		lcd.setCursor(0,1);
-		lcd.write(" PIP  Plat  PEEP ");
+		lcd.write("  PIP  Plat  PEEP ");
 		lcd.setCursor(0,2);
-		lcd.write(" 42    34    10  ");
+		lcd.write("  42    34    10  ");
 		lcd.setCursor(2,3);
-		lcd.write("units : cmh2o");
+		lcd.write("  units : cmh2o   ");
 		
 	} else 	if ( runtimeState.paramPerScreen == PARAM_3_HORIZONTAL ) {
 	
@@ -633,6 +681,9 @@ void UiMenuMainClass::drawRuntimeTopBottomLines(int currentPage, int totalPages)
 	sprintf(buffer,"%d/%d",currentPage, totalPages);
 	lcd.setCursor(0,0);lcd.write(buffer);
 	
+	if( 1 /*error*/ ) {
+		lcd.setCursor(0,3);lcd.write(byte(0x1));
+	}
 	return;
 }
 
@@ -686,4 +737,69 @@ void testIcons(){
 	lcd.write(RIGHT_ARROW_ICON);
 
 	return ;
+}
+void UiMenuMainClass::drawServiceMenuScreen1(void) {
+	
+	/// Factory Reset
+	lcd.setCursor(2,0);
+	lcd.write("Factory Settings");
+	
+	lcd.setCursor(12,3);
+	lcd.write((byte)(0x3));
+	
+	lcd.setCursor(19,3);
+	lcd.write((byte)(0x6));// press edit to reset the data to factory settings
+	
+	lcd.setCursor(1,2);
+	lcd.write("< All Parameters >");// All Parameters/Ventilator Params(TV,IER,RR,Pmax)/Calibration Data
+	delay(DELAY_1_SECOND);
+
+	lcd.setCursor(1,2);
+	lcd.write("< TV,IER,RR,Pmax >");
+	delay(DELAY_1_SECOND);
+
+	lcd.setCursor(1,2);
+	lcd.write("<Calibration Data>");
+	delay(DELAY_1_SECOND);
+	
+	return;
+}
+
+void UiMenuMainClass::drawServiceMenuScreen2(void) {
+	
+	lcd.setCursor(2,0);
+	lcd.write("   Diagnostics   ");	
+	
+	lcd.setCursor(12,3);
+	lcd.write((byte)(0x3));
+	
+	lcd.setCursor(19,3);
+	lcd.write((byte)(0x6));// press edit to enter module specific diagnostics test
+		
+	lcd.setCursor(7,2);
+	lcd.write("<   ADC   >");
+	delay(DELAY_1_SECOND);
+		
+	lcd.setCursor(7,2);
+	lcd.write("<   COM   >");
+	delay(DELAY_1_SECOND);
+		
+	lcd.setCursor(7,2);
+	lcd.write("< Sensors >");
+	delay(DELAY_1_SECOND);
+	
+	lcd.setCursor(7,2);
+	lcd.write("< Valves  >");
+	delay(DELAY_1_SECOND);
+	
+	return;
+}
+
+void UiMenuMainClass::drawServiceMenuScreen3(void) {
+	
+	/// Raw Voltage
+	
+	/// Raw Pressure
+	
+	return;
 }

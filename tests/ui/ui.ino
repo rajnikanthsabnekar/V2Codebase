@@ -5,7 +5,7 @@
 // local includes
 #include "UiMenuMain.h"
 
-#define DELAY_HALF_SECOND (500 * 10 )
+#define DELAY_HALF_SECOND ( 500 * 2 )
 
 extern UiMenuMainClass UiMenuMain;
 
@@ -60,7 +60,28 @@ void loop() {
 	}
 	
 #endif
+
+#if 1
+	UiMenuMain.clearDisplay();
+	UiMenuMain.drawServiceMenuScreen1();
+	delay(DELAY_1_SECOND);
+
+	UiMenuMain.clearDisplay();
+	UiMenuMain.drawServiceMenuScreen2();
+	delay(DELAY_1_SECOND);
+
+	UiMenuMain.clearDisplay();
+	UiMenuMain.drawServiceMenuScreen3();
+	delay(DELAY_1_SECOND);
 	
+
+#endif
+
+#if 1
+	UiMenuMain.clearDisplay();
+
+	UiMenuMain.errorScreen(1,1);
+#endif
 	return;
 }
 
